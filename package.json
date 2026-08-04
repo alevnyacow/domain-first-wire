@@ -1,7 +1,7 @@
 {
     "name": "@domain-first/wire",
     "description": "Type-safe dependency wiring for TypeScript without containers, decorators, or runtime reflection",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "type": "module",
     "exports": {
         ".": {
@@ -33,6 +33,5 @@
         "@rstest/core": "^0.10.6",
         "@types/node": "^24.13.2",
         "typescript": "^6.0.3"
-    },
-    "private": true
+    }
 }
