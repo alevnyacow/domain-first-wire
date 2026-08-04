@@ -6,7 +6,7 @@
         "url": "https://github.com/alevnyacow/domain-first-wire.git"
     },
     "description": "Type-safe dependency wiring for TypeScript without containers, decorators, or runtime reflection",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "module",
     "exports": {
         ".": {
