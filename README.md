@@ -38,6 +38,8 @@ interface UserRepository {
     save: (user: User) => Promise<void>;
 }
 
+class InMemoryDb {}
+
 class InMemoryUserRepository implements UserRepository {
     constructor() {}
     // in-memory implementation
@@ -48,7 +50,11 @@ class PrismaUserRepository implements UserRepository {
     // prisma implementation
 }
 
-const wireInMemoryUserRepository = wireClass(InMemoryUserRepository, []);
+const wireInMemoryDb = wireClass(InMemoryDb, []);
+
+const wireInMemoryUserRepository = wireClass(InMemoryUserRepository, [
+    wireInMemoryDb,
+]);
 
 const wirePrismaUserRepository = wireClass(PrismaUserRepository, [
     // assuming prismaClient is imported from somewhere
