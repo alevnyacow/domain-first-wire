@@ -1,5 +1,5 @@
-import { branchedWire, wireClass, wireValue } from '@domain-first/wire';
 import { expect, test } from '@rstest/core';
+import { branchedWire, wireClass, wireValue } from './generators';
 
 test('gesg', async () => {
     type User = { id: string; name: string };
