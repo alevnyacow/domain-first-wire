@@ -44,8 +44,6 @@ class PrismaUserRepository implements UserRepository {
 
 const wireInMemoryUserRepository = wireClass(InMemoryUserRepository, []);
 
-// A wire is just a parameterless function that provides a dependency,
-// so `const inMemoryUserRepository = wireInMemoryUserRepository()` will work
 const wirePrismaUserRepository = wireClass(PrismaUserRepository, [
     // assuming prismaClient is imported from somewhere
     wireValue(prismaClient),
