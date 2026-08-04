@@ -1,7 +1,7 @@
 import { wireErrors } from '../errors';
 import type { UnwrapWire, Wire } from '../types';
 
-const NonExistingBranchError = wireErrors.error<{ branch: string }>(
+export const NonExistingBranchError = wireErrors.error<{ branch: string }>(
     'NON_EXISTING_BRANCH'
 );
 
