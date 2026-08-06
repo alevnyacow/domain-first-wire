@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.3...v1.0.4) (2026-08-06)
+
+
+### Bug Fixes
+
+* updated badges ([e748cd3](https://github.com/alevnyacow/domain-first-wire/commit/e748cd31af706e81cd7e738368fc71858cbf668f))
+
 ## [1.0.3](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.2...v1.0.3) (2026-08-04)
 
 
