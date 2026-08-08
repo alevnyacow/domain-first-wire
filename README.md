@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    Type-safe dependency wiring for TypeScript without containers, decorators, or runtime reflection.
+    Explicit dependency composition for TypeScript, verified at compile time.
 </p>
 
 <p align="center">
