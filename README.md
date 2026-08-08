@@ -29,7 +29,12 @@ That's it. No containers. No decorators. No runtime reflection. Just explicit, t
 # Quick start
 
 ```ts
-import { wireClass, wireValue, branchedWire } from "@domain-first/wire";
+import {
+    wireClass,
+    wireValue,
+    branchedWire,
+    memoWire,
+} from "@domain-first/wire";
 
 type User = { id: string; name: string };
 
@@ -70,7 +75,8 @@ const envBranchedWire = branchedWire<"test" | "dev">(() => {
 });
 
 const wireUserRepository = envBranchedWire({
-    test: wireInMemoryUserRepository,
+    // singleton
+    test: memoWire(wireInMemoryUserRepository),
     dev: wirePrismaUserRepository,
 });
 
