@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.4...v1.0.5) (2026-08-08)
+
+
+### Bug Fixes
+
+* added `memoWire` in README ([e51f56c](https://github.com/alevnyacow/domain-first-wire/commit/e51f56cd23cb4ed38895cd714e361eeaa60118a2))
+
 ## [1.0.4](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.3...v1.0.4) (2026-08-06)
 
 
