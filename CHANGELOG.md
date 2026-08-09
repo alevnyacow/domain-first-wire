@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.7...v1.0.8) (2026-08-09)
+
+
+### Bug Fixes
+
+* little refactoring on integration test (though it's still a lot work here ([39ad163](https://github.com/alevnyacow/domain-first-wire/commit/39ad16352d0312740d2ec2f719bceabde69d4ccb))
+
 ## [1.0.7](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.6...v1.0.7) (2026-08-09)
 
 
