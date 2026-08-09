@@ -1,4 +1,5 @@
 import { expect, test } from '@rstest/core';
+import { memoWire } from './decorators';
 import { branchedWire, wireClass, wireValue } from './generators';
 
 test('gesg', async () => {
@@ -10,10 +11,12 @@ test('gesg', async () => {
     }
 
     class InMemoryUserRepository implements UserRepository {
-        findById = async (id: string) => ({ id, name: 'USER-FROM-IN-MEMORY' });
+        public readonly users: Map<string, User> = new Map();
+
+        findById = async (id: string) => this.users.get(id) ?? null;
 
         save = async (user: User) => {
-            console.log(`Saved ${JSON.stringify(user)} in memory`);
+            this.users.set(user.id, user);
         };
     }
 
@@ -29,7 +32,9 @@ test('gesg', async () => {
         };
     }
 
-    const wireInMemoryUserRepository = wireClass(InMemoryUserRepository, []);
+    const wireInMemoryUserRepository = memoWire(
+        wireClass(InMemoryUserRepository, [])
+    );
 
     // A wire is just a parameterless function that provides a dependency,
     // so `const inMemoryUserRepository = wireInMemoryUserRepository()` will work
@@ -68,7 +73,9 @@ test('gesg', async () => {
 
     const changeUserNameUseCase = wireChangeUserNameUseCase();
 
+    const a = wireInMemoryUserRepository();
+    await a.save({ id: '1', name: 'name' });
     await changeUserNameUseCase.handle('1', 'new name');
 
-    expect(true).toBe(true);
+    expect(a.users.get('1')).toEqual({ id: '1', name: 'new name' });
 });
