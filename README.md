@@ -114,11 +114,11 @@ const userController = wireUserController();
 
 # Test coverage
 
-Will be improved in upcoming versions.
+Full ✅
 
 | Type       | Threshold | Current value |
 | ---------- | --------- | ------------- |
-| Statements | 95 %      | 96.55 %       |
-| Branches   | 75 %      | 75 %          |
+| Statements | 100 %     | 100 %         |
+| Branches   | 100 %     | 100 %         |
 | Functions  | 100 %     | 100 %         |
-| Lines      | 95 %      | 95.65 %       |
+| Lines      | 100 %     | 100 %         |
