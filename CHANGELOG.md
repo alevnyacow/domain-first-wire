@@ -1,3 +1,10 @@
+## [1.0.13](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.12...v1.0.13) (2026-08-10)
+
+
+### Bug Fixes
+
+* added verbose reporter for tests ([4f040f3](https://github.com/alevnyacow/domain-first-wire/commit/4f040f3571c4a5405c926c9015a8c418d0c756f2))
+
 ## [1.0.12](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.11...v1.0.12) (2026-08-10)
 
 
