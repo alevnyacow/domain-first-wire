@@ -1,3 +1,10 @@
+## [1.0.12](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.11...v1.0.12) (2026-08-10)
+
+
+### Bug Fixes
+
+* removed `Test coverage` section in README (badge has all the info) ([956438a](https://github.com/alevnyacow/domain-first-wire/commit/956438ac5fc6ddb3e64155123429150d0b9e97e3))
+
 ## [1.0.11](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.10...v1.0.11) (2026-08-10)
 
 
