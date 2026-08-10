@@ -112,14 +112,3 @@ const wireUserController = wireClass(UserController, [
 
 const userController = wireUserController();
 ```
-
-# Test coverage
-
-Full ✅
-
-| Type       | Threshold | Current value |
-| ---------- | --------- | ------------- |
-| Statements | 100 %     | 100 %         |
-| Branches   | 100 %     | 100 %         |
-| Functions  | 100 %     | 100 %         |
-| Lines      | 100 %     | 100 %         |
