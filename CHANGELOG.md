@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.10...v1.0.11) (2026-08-10)
+
+
+### Bug Fixes
+
+* added test coverage badge ([db81236](https://github.com/alevnyacow/domain-first-wire/commit/db8123675349c3a786c7c16dbb8ac9035b1911a2))
+
 ## [1.0.10](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.9...v1.0.10) (2026-08-10)
 
 
