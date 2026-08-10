@@ -5,7 +5,6 @@ export default defineConfig({
     extends: withRslibConfig(),
     coverage: {
         enabled: true,
-        exclude: ['**/index.ts'],
         thresholds: {
             statements: 100,
             branches: 100,
