@@ -1,3 +1,10 @@
+## [1.0.15](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.14...v1.0.15) (2026-08-11)
+
+
+### Bug Fixes
+
+* new tagline ([26f73c2](https://github.com/alevnyacow/domain-first-wire/commit/26f73c2d71d5fba12f0200c036351ec433defc30))
+
 ## [1.0.14](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.13...v1.0.14) (2026-08-11)
 
 
