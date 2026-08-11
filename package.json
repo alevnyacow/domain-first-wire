@@ -5,7 +5,7 @@
         "type": "git",
         "url": "https://github.com/alevnyacow/domain-first-wire.git"
     },
-    "description": "Manual wiring, with a DI-like experience — without the container",
+    "description": "Explicit dependency composition for TypeScript, checked at compile time",
     "version": "1.0.14",
     "type": "module",
     "exports": {

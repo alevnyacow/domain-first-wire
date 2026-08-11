@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    Manual wiring, with a DI-like experience — without the container.
+    Explicit dependency composition for TypeScript, checked at compile time.
 </p>
 
 <p align="center">
