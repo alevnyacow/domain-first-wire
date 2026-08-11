@@ -101,10 +101,6 @@ const wireChangeUserNameUseCase = wireClass(ChangeUserNameUseCase, [
     wireUserRepository,
 ]);
 
-const changeUserNameUseCase = wireChangeUserNameUseCase();
-
-await changeUserNameUseCase.handle("1", "new name");
-
 class UserController {
     constructor(private changeName: ChangeUserNameUseCase) {}
     // implementation
