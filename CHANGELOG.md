@@ -1,3 +1,10 @@
+## [1.0.14](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.13...v1.0.14) (2026-08-11)
+
+
+### Bug Fixes
+
+* README refactoring ([b54033a](https://github.com/alevnyacow/domain-first-wire/commit/b54033a0a0fe9f7fa92e9d1d4c4497468bc4cd33))
+
 ## [1.0.13](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.12...v1.0.13) (2026-08-10)
 
 

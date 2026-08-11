@@ -6,7 +6,7 @@
         "url": "https://github.com/alevnyacow/domain-first-wire.git"
     },
     "description": "Manual wiring, with a DI-like experience — without the container",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "type": "module",
     "exports": {
         ".": {
