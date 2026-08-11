@@ -6,7 +6,7 @@
         "url": "https://github.com/alevnyacow/domain-first-wire.git"
     },
     "description": "Explicit dependency composition for TypeScript, checked at compile time",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "type": "module",
     "exports": {
         ".": {
