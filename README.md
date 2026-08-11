@@ -51,12 +51,12 @@ interface UserRepository {
 class InMemoryDb {}
 
 class InMemoryUserRepository implements UserRepository {
-    constructor() {}
+    constructor(private readonly db: InMemoryDb) {}
     // in-memory implementation
 }
 
 class PrismaUserRepository implements UserRepository {
-    constructor(prismaClient: Prisma) {}
+    constructor(private readonly prismaClient: Prisma) {}
     // prisma implementation
 }
 
