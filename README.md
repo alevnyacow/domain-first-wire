@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    Explicit dependency composition for TypeScript, verified at compile time.
+    Manual wiring, with a DI-like experience — without the container.
 </p>
 
 <p align="center">
@@ -15,9 +15,13 @@
   <img src="https://img.shields.io/npm/l/%40domain-first%2Fwire" alt="license">
 </p>
 
-# Overview
+# Motivation
 
-`@domain-first/wire` lets you compose your application's dependency graph using plain TypeScript functions.
+Developers usually have to choose between using a runtime DI container or wiring everything by hand. We tend to think of the first option as more convenient, while the second gives us better transparency, explicit dependencies, and less runtime overhead.
+
+**Wire gives you a third option:** keep the simplicity, transparency, and type-safety of manual composition, while getting the convenience and feel of a DI container — without the container, runtime reflection, or magic.
+
+# What is a Wire?
 
 A wire is simply:
 
@@ -67,7 +71,7 @@ const wirePrismaUserRepository = wireClass(PrismaUserRepository, [
     wireValue(prismaClient),
 ]);
 
-// `branchedWire` provides diffirent wires for every branch
+// `branchedWire` provides different wires for every branch
 const envBranchedWire = branchedWire<"test" | "dev">(() => {
     if (process.env.NODE_ENV === "test") {
         return "test";
