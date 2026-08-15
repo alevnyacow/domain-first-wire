@@ -1,3 +1,10 @@
+## [1.0.18](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.17...v1.0.18) (2026-08-15)
+
+
+### Bug Fixes
+
+* **README:** added semver badge ([20b1605](https://github.com/alevnyacow/domain-first-wire/commit/20b1605f948e9e89b0cdd07284e561fdf79f0acb))
+
 ## [1.0.17](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.16...v1.0.17) (2026-08-11)
 
 
