@@ -1,3 +1,10 @@
+## [1.0.19](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.18...v1.0.19) (2026-10-02)
+
+
+### Bug Fixes
+
+* updated readme ([f9d54bb](https://github.com/alevnyacow/domain-first-wire/commit/f9d54bb6c1c548cb30dc1f9602be652bf9a3d8b7))
+
 ## [1.0.18](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.17...v1.0.18) (2026-08-15)
 
 
