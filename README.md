@@ -18,10 +18,7 @@
 </p>
 
 ```ts
-const wireUserService = wireClass(UserService, [
-    wireDb,
-    wireLogger,
-]);
+const wireUserService = wireClass(UserService, [wireDb, wireLogger]);
 
 // fully typed, fully wired
 const userService = wireUserService();
@@ -36,7 +33,7 @@ npm install @domain-first/wire
 ## Why Wire?
 
 - ✅ **Compile-time safety.** TypeScript checks every constructor against its dependency list.
-- 🪶 **Tiny API.** Five functions you'll learn in five minutes.
+- 🪶 **Tiny API.** A few functions you'll learn in five minutes.
 - 🚫 **No magic.** No decorators, no `reflect-metadata`, no string tokens, no container.
 - 🔍 **Transparent.** Go to definition on a wire and you land on the real code.
 - 🧪 **Easy to test.** Switch implementations per environment with exhaustive, type-checked branches.
@@ -89,7 +86,9 @@ byEnv({
 | Function                            | What it does                                                    |
 | ----------------------------------- | --------------------------------------------------------------- |
 | `wireClass(Class, [...wires])`      | Wires a class from type-checked constructor dependencies.       |
+| `wireFunction(fn, [...wires])`      | Wires a function call from type-checked parameter dependencies. |
 | `wireClassAsync(Class, [...wires])` | Same as `wireClass`, but dependencies may be async wires.       |
+| `wireFunctionAsync(fn, [...wires])` | Same as `wireFunction`, but dependencies may be async wires.    |
 | `wireValue(value)`                  | Wraps an existing value (config, client, etc.) into a wire.     |
 | `memoWire(wire)`                    | Turns any wire into a lazy singleton.                           |
 | `branchedWire(selector)(choices)`   | Picks a wire at runtime based on a branch (env, feature flags). |
@@ -129,9 +128,7 @@ class ChangeUserNameUseCase {
 }
 
 class UserController {
-    constructor(
-        private changeName: ChangeUserNameUseCase,
-    ) {}
+    constructor(private changeName: ChangeUserNameUseCase) {}
     // ...
 }
 ```
@@ -139,11 +136,7 @@ class UserController {
 ### 2. Wire the infrastructure
 
 ```ts
-import {
-    wireClass,
-    wireValue,
-    memoWire,
-} from "@domain-first/wire";
+import { wireClass, wireValue, memoWire } from "@domain-first/wire";
 
 const wireInMemoryDb = wireClass(InMemoryDb, []);
 
@@ -175,21 +168,50 @@ const wireUserRepository = byEnv({
 ### 4. Compose the app
 
 ```ts
-const wireChangeUserName = wireClass(
-    ChangeUserNameUseCase,
-    [wireUserRepository],
-);
+const wireChangeUserName = wireClass(ChangeUserNameUseCase, [
+    wireUserRepository,
+]);
 
-const wireUserController = wireClass(
-    UserController,
-    [wireChangeUserName],
-);
+const wireUserController = wireClass(UserController, [
+    wireChangeUserName,
+]);
 
 // 🎉 everything is built and connected
 const userController = wireUserController();
 ```
 
 Every step is type-checked. If `UserController` gets a new constructor parameter tomorrow, the compiler points to the exact line you need to update.
+
+## Not just classes
+
+Factories, closures and third-party constructors like `createClient(...)` can be wired too. `wireFunction` calls a function with its dependencies, just like `wireClass` calls a constructor:
+
+```ts
+import { wireFunction } from "@domain-first/wire";
+
+const createLogger = (config: Config): Logger =>
+    pino({ level: config.logLevel });
+
+const wireLogger = wireFunction(createLogger, [wireConfig]);
+```
+
+Prefer functions over classes? A curried function gets its dependencies bound and the rest left for the caller:
+
+```ts
+const changeUserName =
+    (users: UserRepository) =>
+    async (id: string, newName: string) => {
+        const user = await users.findById(id);
+        if (!user) throw new Error("User not found");
+        await users.save({ ...user, name: newName });
+    };
+
+const wireChangeUserName = wireFunction(changeUserName, [
+    wireUserRepository,
+]);
+
+await wireChangeUserName()("1", "new name");
+```
 
 ## Async wires
 
@@ -202,17 +224,23 @@ type AsyncWire<T> = () => Promise<T>;
 `wireClassAsync` accepts any mix of sync and async wires and returns an async wire itself:
 
 ```ts
-import { wireClassAsync, memoWire, type AsyncWire } from "@domain-first/wire";
+import {
+    wireClassAsync,
+    memoWire,
+    type AsyncWire,
+} from "@domain-first/wire";
 
 class UserService {
     constructor(db: Database, logger: Logger) {}
 }
 
 // singleton: connects once, every caller gets the same promise
-const wireDb: AsyncWire<Database> = memoWire(() => Database.connect(url));
+const wireDb: AsyncWire<Database> = memoWire(() =>
+    Database.connect(url),
+);
 
 const wireUserService = wireClassAsync(UserService, [
-    wireDb,     // async
+    wireDb, // async
     wireLogger, // sync
 ]);
 
@@ -224,7 +252,18 @@ It follows the same rules as `wireClass`:
 - **Type-checked.** Every wire is checked against the matching constructor parameter. An `AsyncWire<Database>` fits a `Database` parameter, an `AsyncWire<Logger>` does not.
 - **Lazy.** Nothing is built until you call the wire, and every call builds a new instance.
 - **Concurrent.** Async dependencies are resolved in parallel.
-- **Errors propagate.** If a dependency rejects or the constructor throws, the returned promise rejects.
+- **Errors propagate.** If a dependency rejects or the constructor (or function) throws, the returned promise rejects.
+
+`wireFunctionAsync` does the same for functions. If the function itself is async, its result is awaited too:
+
+```ts
+import { wireFunctionAsync } from "@domain-first/wire";
+
+const connect = async (config: Config): Promise<Database> =>
+    Database.connect(config.dbUrl);
+
+const wireDb = wireFunctionAsync(connect, [wireConfig]); // AsyncWire<Database>
+```
 
 `memoWire` works with async wires out of the box: it caches the promise, so concurrent calls share a single initialization. Note that a rejected promise is cached too.
 
