@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/alevnyacow/domain-first-wire/compare/v1.2.0...v1.2.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* AsyncWiredTuple type ([d20c0d5](https://github.com/alevnyacow/domain-first-wire/commit/d20c0d5c4a29d1918c8cef7efecab87ac14f7304))
+
 # [1.2.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.1.0...v1.2.0) (2026-10-12)
 
 
