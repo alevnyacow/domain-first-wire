@@ -83,15 +83,16 @@ byEnv({
 
 ## API
 
-| Function                            | What it does                                                    |
-| ----------------------------------- | --------------------------------------------------------------- |
-| `wireClass(Class, [...wires])`      | Wires a class from type-checked constructor dependencies.       |
-| `wireFunction(fn, [...wires])`      | Wires a function call from type-checked parameter dependencies. |
-| `wireClassAsync(Class, [...wires])` | Same as `wireClass`, but dependencies may be async wires.       |
-| `wireFunctionAsync(fn, [...wires])` | Same as `wireFunction`, but dependencies may be async wires.    |
-| `wireValue(value)`                  | Wraps an existing value (config, client, etc.) into a wire.     |
-| `memoWire(wire)`                    | Turns any wire into a lazy singleton.                           |
-| `branchedWire(selector)(choices)`   | Picks a wire at runtime based on a branch (env, feature flags). |
+| Function                               | What it does                                                       |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| `wireClass(Class, [...wires])`         | Wires a class from type-checked constructor dependencies.          |
+| `wireFunction(fn, [...wires])`         | Wires a function call from type-checked parameter dependencies.    |
+| `wireClassAsync(Class, [...wires])`    | Same as `wireClass`, but dependencies may be async wires.          |
+| `wireFunctionAsync(fn, [...wires])`    | Same as `wireFunction`, but dependencies may be async wires.       |
+| `wireValue(value)`                     | Wraps an existing value (config, client, etc.) into a wire.        |
+| `memoWire(wire)`                       | Turns any wire into a lazy singleton.                              |
+| `branchedWire(selector)(choices)`      | Picks a wire at runtime based on a branch (env, feature flags).    |
+| `branchedWireAsync(selector)(choices)` | Same as `branchedWire`, but the branch is selected asynchronously. |
 
 ## Real-world example
 
@@ -266,6 +267,27 @@ const wireDb = wireFunctionAsync(connect, [wireConfig]); // AsyncWire<Database>
 ```
 
 `memoWire` works with async wires out of the box: it caches the promise, so concurrent calls share a single initialization. Note that a rejected promise is cached too.
+
+### Async branch selection
+
+Sometimes the branch itself is only known asynchronously, e.g. a feature flag from a remote service. `branchedWireAsync` takes an async selector and always returns an async wire. Branches may be sync or async:
+
+```ts
+import { branchedWireAsync } from "@domain-first/wire";
+
+const byFlag = branchedWireAsync<"new" | "legacy">(async () =>
+    (await flags.isEnabled("new-search")) ? "new" : "legacy",
+);
+
+const wireSearch = byFlag({
+    new: wireNewSearch,       // sync or async
+    legacy: wireLegacySearch,
+}); // AsyncWire<NewSearch | LegacySearch>
+
+const search = await wireSearch();
+```
+
+The selector runs on every call, and an unknown branch rejects with `NonExistingBranchError`.
 
 ## Give it a try
 
