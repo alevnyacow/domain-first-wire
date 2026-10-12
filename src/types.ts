@@ -2,17 +2,13 @@ export type Wire<T> = () => T;
 
 export type AsyncWire<T> = Wire<Promise<T>>;
 
-export type WiredTuple<T extends readonly any[]> = T extends readonly []
-    ? []
-    : T extends readonly [infer Head, ...infer Tail]
-      ? [Wire<Head>, ...WiredTuple<Tail>]
-      : never;
+export type WiredTuple<T extends readonly any[]> = {
+    [K in keyof T]: Wire<T[K]>;
+};
 
-export type AsyncWiredTuple<T extends readonly any[]> = T extends readonly []
-    ? []
-    : T extends readonly [infer Head, ...infer Tail]
-      ? [Wire<Head | Promise<Head>>, ...AsyncWiredTuple<Tail>]
-      : never;
+export type AsyncWiredTuple<T extends readonly any[]> = {
+    [K in keyof T]: Wire<T[K] | Promise<T[K]>>;
+};
 
 export type WireConstructorParameters<
     Class extends new (

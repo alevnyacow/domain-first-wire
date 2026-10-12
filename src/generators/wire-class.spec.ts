@@ -70,3 +70,42 @@ test('Rejects wire that may return a promise at compile time', () => {
     // @ts-expect-error wireClass accepts only sync wires
     expect(wireClass(Counter, [wireMaybeAsync])().value.id).toBe(1);
 });
+
+test('Wire class with optional constructor parameter', () => {
+    class Greeting {
+        constructor(
+            public readonly name: string,
+            public readonly prefix?: string
+        ) {}
+    }
+    expect(wireClass(Greeting, [wireValue('world')])().prefix).toBeUndefined();
+    expect(
+        wireClass(Greeting, [wireValue('world'), wireValue('Hello')])().prefix
+    ).toBe('Hello');
+    // @ts-expect-error required parameter is missing
+    wireClass(Greeting, []);
+});
+
+test('Wire class with default constructor parameter', () => {
+    class Retry {
+        constructor(public readonly attempts = 3) {}
+    }
+    expect(wireClass(Retry, [])().attempts).toBe(3);
+    expect(wireClass(Retry, [wireValue(5)])().attempts).toBe(5);
+});
+
+test('Wire class with rest constructor parameters', () => {
+    class Tags {
+        public readonly tags: string[];
+        constructor(...tags: string[]) {
+            this.tags = tags;
+        }
+    }
+    expect(wireClass(Tags, [])().tags).toEqual([]);
+    expect(wireClass(Tags, [wireValue('a'), wireValue('b')])().tags).toEqual([
+        'a',
+        'b'
+    ]);
+    // @ts-expect-error rest parameter type mismatch
+    wireClass(Tags, [wireValue(1)]);
+});

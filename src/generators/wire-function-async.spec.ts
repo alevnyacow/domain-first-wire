@@ -97,3 +97,18 @@ test('Accepts branched wire with sync and async branches', async () => {
     });
     expect(await wireFunctionAsync(join, [wireFirst, () => 'a'])()).toBe('2-a');
 });
+
+test('Wire function with optional and rest parameters', async () => {
+    const format = (name: string, prefix?: string, ...suffixes: string[]) =>
+        [prefix, name, ...suffixes].filter(Boolean).join(' ');
+    expect(await wireFunctionAsync(format, [async () => 'world'])()).toBe(
+        'world'
+    );
+    expect(
+        await wireFunctionAsync(format, [
+            async () => 'world',
+            () => 'Hello',
+            async () => '!'
+        ])()
+    ).toBe('Hello world !');
+});

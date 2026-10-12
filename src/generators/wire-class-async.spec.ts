@@ -109,3 +109,19 @@ test('Accepts branched wire with sync and async branches', async () => {
     const counter = await wireClassAsync(Counter, [wireValue])();
     expect(counter.value.id).toBe(1);
 });
+
+test('Wire class with optional constructor parameter', async () => {
+    class Greeting {
+        constructor(
+            public readonly name: string,
+            public readonly prefix?: string
+        ) {}
+    }
+    const greeting1 = await wireClassAsync(Greeting, [async () => 'world'])();
+    const greeting2 = await wireClassAsync(Greeting, [
+        () => 'world',
+        async () => 'Hello'
+    ])();
+    expect(greeting1.prefix).toBeUndefined();
+    expect(greeting2.prefix).toBe('Hello');
+});

@@ -34,3 +34,16 @@ test('Wires curried function with dependencies bound', () => {
     const wireGreet = wireFunction(greet, [wireValue('Hello')]);
     expect(wireGreet()('world')).toBe('Hello, world');
 });
+
+test('Wire function with optional and rest parameters', () => {
+    const format = (name: string, prefix?: string, ...suffixes: string[]) =>
+        [prefix, name, ...suffixes].filter(Boolean).join(' ');
+    expect(wireFunction(format, [wireValue('world')])()).toBe('world');
+    expect(
+        wireFunction(format, [
+            wireValue('world'),
+            wireValue('Hello'),
+            wireValue('!')
+        ])()
+    ).toBe('Hello world !');
+});
