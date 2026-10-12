@@ -1,6 +1,7 @@
 import { expect, test } from '@rstest/core';
 import { memoWire } from '../decorators/memo-wire';
 import type { AsyncWire, Wire } from '../types';
+import { branchedWire } from './branched-wire';
 import { wireClassAsync } from './wire-class-async';
 
 class Pair {
@@ -97,4 +98,14 @@ test('Rejects when dependency rejects', async () => {
 test('Rejects when constructor throws', async () => {
     const wireBroken = wireClassAsync(Broken, [async () => 1]);
     await expect(wireBroken()).rejects.toThrow('constructor failed');
+});
+
+test('Accepts branched wire with sync and async branches', async () => {
+    const byBranch = branchedWire<'sync' | 'async'>(() => 'sync');
+    const wireValue = byBranch({
+        sync: () => ({ id: 1 }),
+        async: async () => ({ id: 2 })
+    });
+    const counter = await wireClassAsync(Counter, [wireValue])();
+    expect(counter.value.id).toBe(1);
 });

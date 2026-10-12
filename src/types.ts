@@ -11,7 +11,7 @@ export type WiredTuple<T extends readonly any[]> = T extends readonly []
 export type AsyncWiredTuple<T extends readonly any[]> = T extends readonly []
     ? []
     : T extends readonly [infer Head, ...infer Tail]
-      ? [Wire<Head> | AsyncWire<Head>, ...AsyncWiredTuple<Tail>]
+      ? [Wire<Head | Promise<Head>>, ...AsyncWiredTuple<Tail>]
       : never;
 
 export type WireConstructorParameters<

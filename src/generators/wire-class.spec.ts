@@ -1,4 +1,5 @@
 import { expect, test } from '@rstest/core';
+import { branchedWire } from './branched-wire';
 import { wireClass } from './wire-class';
 import { wireValue } from './wire-value';
 
@@ -58,4 +59,14 @@ test('Wires class from another wired class', () => {
         wireClass(Pair, [wireValue(1), wireValue('a')])
     ]);
     expect(wireService().pair).toBeInstanceOf(Pair);
+});
+
+test('Rejects wire that may return a promise at compile time', () => {
+    const byBranch = branchedWire<'sync' | 'async'>(() => 'sync');
+    const wireMaybeAsync = byBranch({
+        sync: () => ({ id: 1 }),
+        async: async () => ({ id: 2 })
+    });
+    // @ts-expect-error wireClass accepts only sync wires
+    expect(wireClass(Counter, [wireMaybeAsync])().value.id).toBe(1);
 });

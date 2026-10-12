@@ -1,6 +1,7 @@
 import { expect, test } from '@rstest/core';
 import { memoWire } from '../decorators/memo-wire';
 import type { AsyncWire, Wire } from '../types';
+import { branchedWire } from './branched-wire';
 import { wireFunctionAsync } from './wire-function-async';
 
 const join = (first: number, second: string) => `${first}-${second}`;
@@ -86,4 +87,13 @@ test('Rejects when async function rejects', async () => {
         [async () => 1]
     );
     await expect(wireBroken()).rejects.toThrow('function rejected');
+});
+
+test('Accepts branched wire with sync and async branches', async () => {
+    const byBranch = branchedWire<'sync' | 'async'>(() => 'async');
+    const wireFirst = byBranch({
+        sync: () => 1,
+        async: async () => 2
+    });
+    expect(await wireFunctionAsync(join, [wireFirst, () => 'a'])()).toBe('2-a');
 });
