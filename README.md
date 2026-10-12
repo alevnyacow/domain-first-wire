@@ -39,13 +39,15 @@ npm install @domain-first/wire
 - 🧪 **Easy to test.** Switch implementations per environment with exhaustive, type-checked branches.
 - 🧩 **Plain classes.** Your domain code stays clean and knows nothing about Wire.
 
-## The whole idea in one line
+## The whole idea in three lines
 
 ```ts
 type Wire<T> = () => T;
+type AsyncWire<T> = () => Promise<T>;
+// a class, a function, a value: anything can be wired
 ```
 
-A wire is just a function that builds something. Wires compose into other wires, and the TypeScript compiler checks every connection.
+A wire is just a function that builds something. Sync or async, it doesn't matter. Wires compose into other wires, and the TypeScript compiler checks every connection.
 
 ## The compiler has your back
 
@@ -83,16 +85,17 @@ byEnv({
 
 ## API
 
-| Function                               | What it does                                                       |
-| -------------------------------------- | ------------------------------------------------------------------ |
-| `wireClass(Class, [...wires])`         | Wires a class from type-checked constructor dependencies.          |
-| `wireFunction(fn, [...wires])`         | Wires a function call from type-checked parameter dependencies.    |
-| `wireClassAsync(Class, [...wires])`    | Same as `wireClass`, but dependencies may be async wires.          |
-| `wireFunctionAsync(fn, [...wires])`    | Same as `wireFunction`, but dependencies may be async wires.       |
-| `wireValue(value)`                     | Wraps an existing value (config, client, etc.) into a wire.        |
-| `memoWire(wire)`                       | Turns any wire into a lazy singleton.                              |
-| `branchedWire(selector)(choices)`      | Picks a wire at runtime based on a branch (env, feature flags).    |
-| `branchedWireAsync(selector)(choices)` | Same as `branchedWire`, but the branch is selected asynchronously. |
+| Function                               | What it does                                                          |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| `wireClass(Class, [...wires])`         | Wires a class from type-checked constructor dependencies.             |
+| `wireFunction(fn, [...wires])`         | Wires a function call from type-checked parameter dependencies.       |
+| `wireClassAsync(Class, [...wires])`    | Same as `wireClass`, but dependencies may be async wires.             |
+| `wireFunctionAsync(fn, [...wires])`    | Same as `wireFunction`, but dependencies may be async wires.          |
+| `wireValue(value)`                     | Wraps an existing value (config, client, etc.) into a wire.           |
+| `memoWire(wire, condition?)`           | Turns any wire into a lazy singleton.                                 |
+| `memoWireAsync(wire, condition?)`      | Async singleton: shares the pending promise, retries after a failure. |
+| `branchedWire(selector)(choices)`      | Picks a wire at runtime based on a branch (env, feature flags).       |
+| `branchedWireAsync(selector)(choices)` | Same as `branchedWire`, but the branch is selected asynchronously.    |
 
 ## Real-world example
 
@@ -183,6 +186,28 @@ const userController = wireUserController();
 
 Every step is type-checked. If `UserController` gets a new constructor parameter tomorrow, the compiler points to the exact line you need to update.
 
+## Memoization
+
+`memoWire` turns a wire into a lazy singleton: it's built on the first call and reused afterwards. By default only successful results are memoized, so if the wire throws, the next call tries again.
+
+Pass a `condition` to decide what gets memoized. It receives the outcome of the call:
+
+```ts
+type MemoWireOutcome<T> =
+    | { success: true; value: T }
+    | { success: false; error: unknown };
+```
+
+```ts
+// memoize only a non-empty config
+const wireConfig = memoWire(loadConfig, (outcome) =>
+    outcome.success && outcome.value !== null,
+);
+
+// memoize failures too: a broken wire throws the same error forever
+const wireStrict = memoWire(wireSomething, () => true);
+```
+
 ## Not just classes
 
 Factories, closures and third-party constructors like `createClient(...)` can be wired too. `wireFunction` calls a function with its dependencies, just like `wireClass` calls a constructor:
@@ -216,18 +241,14 @@ await wireChangeUserName()("1", "new name");
 
 ## Async wires
 
-Some dependencies can only be built asynchronously: a database connection, a config fetched from a secret store. An async wire is a wire that returns a promise:
-
-```ts
-type AsyncWire<T> = () => Promise<T>;
-```
+Some dependencies can only be built asynchronously: a database connection, a config fetched from a secret store. For those there are async wires, wires that return a promise.
 
 `wireClassAsync` accepts any mix of sync and async wires and returns an async wire itself:
 
 ```ts
 import {
     wireClassAsync,
-    memoWire,
+    memoWireAsync,
     type AsyncWire,
 } from "@domain-first/wire";
 
@@ -235,8 +256,8 @@ class UserService {
     constructor(db: Database, logger: Logger) {}
 }
 
-// singleton: connects once, every caller gets the same promise
-const wireDb: AsyncWire<Database> = memoWire(() =>
+// singleton: connects once, reconnects on the next call if connecting fails
+const wireDb: AsyncWire<Database> = memoWireAsync(() =>
     Database.connect(url),
 );
 
@@ -266,7 +287,22 @@ const connect = async (config: Config): Promise<Database> =>
 const wireDb = wireFunctionAsync(connect, [wireConfig]); // AsyncWire<Database>
 ```
 
-`memoWire` works with async wires out of the box: it caches the promise, so concurrent calls share a single initialization. Note that a rejected promise is cached too.
+### Async singletons
+
+`memoWireAsync` is `memoWire` for async wires:
+
+- **One initialization.** While the promise is pending, every caller gets the same promise, so 50 concurrent requests on startup open one connection, not 50.
+- **Retry after failure.** If the promise rejects, everyone waiting gets the error, and the next call runs the wire again. A database that was down on startup doesn't break the service until restart.
+- **Same `condition`.** It receives the settled outcome (the resolved value or the rejection reason), not the promise itself.
+
+```ts
+const wireDb = memoWireAsync(
+    () => Database.connect(url),
+    (outcome) => outcome.success && outcome.value.isReady(),
+);
+```
+
+> Plain `memoWire` also works with async wires, but it memoizes the promise as is, so a rejected promise stays cached forever. Use `memoWireAsync` for async wires.
 
 ### Async branch selection
 
