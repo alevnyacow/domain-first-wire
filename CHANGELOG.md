@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/alevnyacow/domain-first-wire/compare/v1.3.0...v1.3.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* supported optional and spread parameter items in tuple type ([e938eee](https://github.com/alevnyacow/domain-first-wire/commit/e938eeef7f11f28b60b4d5de1d6eaec1ab3d8cd7))
+
 # [1.3.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.2.1...v1.3.0) (2026-10-12)
 
 
