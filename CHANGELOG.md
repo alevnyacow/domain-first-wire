@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.19...v1.1.0) (2026-10-12)
+
+
+### Features
+
+* async wires, wireClassAsync ([ee219fe](https://github.com/alevnyacow/domain-first-wire/commit/ee219fedd235ca0c7003241d6c3a1d2407d7cd0d))
+
 ## [1.0.19](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.18...v1.0.19) (2026-10-02)
 
 
