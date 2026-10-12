@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.1.0...v1.2.0) (2026-10-12)
+
+
+### Features
+
+* wireFunction, wireFunctionAsync ([7a68a09](https://github.com/alevnyacow/domain-first-wire/commit/7a68a09f0590faa3a83c97c66ebaf4df61ba3beb))
+
 # [1.1.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.0.19...v1.1.0) (2026-10-12)
 
 
