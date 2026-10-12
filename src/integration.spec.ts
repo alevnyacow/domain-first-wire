@@ -2,7 +2,7 @@ import { expect, test } from '@rstest/core';
 import { memoWire } from './decorators';
 import { branchedWire, wireClass, wireValue } from './generators';
 
-test('gesg', async () => {
+test('Use case changes user name through environment-selected repository', async () => {
     type User = { id: string; name: string };
 
     interface UserRepository {
@@ -32,29 +32,6 @@ test('gesg', async () => {
         };
     }
 
-    const wireInMemoryUserRepository = memoWire(
-        wireClass(InMemoryUserRepository, [])
-    );
-
-    // A wire is just a parameterless function that provides a dependency,
-    // so `const inMemoryUserRepository = wireInMemoryUserRepository()` will work
-    const wirePrismaUserRepository = wireClass(PrismaUserRepository, [
-        wireValue({ test: 40 })
-    ]);
-
-    // `branchedWire` provides diffirent wires for every branch
-    const envBranchedWire = branchedWire<'test' | 'dev'>(() => {
-        if (process.env.NODE_ENV === 'test') {
-            return 'test';
-        }
-        return 'dev';
-    });
-
-    const wireUserRepository = envBranchedWire({
-        test: wireInMemoryUserRepository,
-        dev: wirePrismaUserRepository
-    });
-
     class ChangeUserNameUseCase {
         constructor(private userRepository: UserRepository) {}
 
@@ -67,15 +44,28 @@ test('gesg', async () => {
         };
     }
 
+    const wireInMemoryUserRepository = memoWire(
+        wireClass(InMemoryUserRepository, [])
+    );
+    const wirePrismaUserRepository = wireClass(PrismaUserRepository, [
+        wireValue({ test: 40 })
+    ]);
+
+    const envBranchedWire = branchedWire<'test' | 'dev'>(() =>
+        process.env.NODE_ENV === 'test' ? 'test' : 'dev'
+    );
+    const wireUserRepository = envBranchedWire({
+        test: wireInMemoryUserRepository,
+        dev: wirePrismaUserRepository
+    });
+
     const wireChangeUserNameUseCase = wireClass(ChangeUserNameUseCase, [
         wireUserRepository
     ]);
 
-    const changeUserNameUseCase = wireChangeUserNameUseCase();
+    const repository = wireInMemoryUserRepository();
+    await repository.save({ id: '1', name: 'name' });
+    await wireChangeUserNameUseCase().handle('1', 'new name');
 
-    const a = wireInMemoryUserRepository();
-    await a.save({ id: '1', name: 'name' });
-    await changeUserNameUseCase.handle('1', 'new name');
-
-    expect(a.users.get('1')).toEqual({ id: '1', name: 'new name' });
+    expect(repository.users.get('1')).toEqual({ id: '1', name: 'new name' });
 });

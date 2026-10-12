@@ -36,7 +36,7 @@ npm install @domain-first/wire
 ## Why Wire?
 
 - ✅ **Compile-time safety.** TypeScript checks every constructor against its dependency list.
-- 🪶 **Tiny API.** Four functions you'll learn in five minutes.
+- 🪶 **Tiny API.** Five functions you'll learn in five minutes.
 - 🚫 **No magic.** No decorators, no `reflect-metadata`, no string tokens, no container.
 - 🔍 **Transparent.** Go to definition on a wire and you land on the real code.
 - 🧪 **Easy to test.** Switch implementations per environment with exhaustive, type-checked branches.
@@ -86,12 +86,13 @@ byEnv({
 
 ## API
 
-| Function                          | What it does                                                    |
-| --------------------------------- | --------------------------------------------------------------- |
-| `wireClass(Class, [...wires])`    | Wires a class from type-checked constructor dependencies.       |
-| `wireValue(value)`                | Wraps an existing value (config, client, etc.) into a wire.     |
-| `memoWire(wire)`                  | Turns any wire into a lazy singleton.                           |
-| `branchedWire(selector)(choices)` | Picks a wire at runtime based on a branch (env, feature flags). |
+| Function                            | What it does                                                    |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `wireClass(Class, [...wires])`      | Wires a class from type-checked constructor dependencies.       |
+| `wireClassAsync(Class, [...wires])` | Same as `wireClass`, but dependencies may be async wires.       |
+| `wireValue(value)`                  | Wraps an existing value (config, client, etc.) into a wire.     |
+| `memoWire(wire)`                    | Turns any wire into a lazy singleton.                           |
+| `branchedWire(selector)(choices)`   | Picks a wire at runtime based on a branch (env, feature flags). |
 
 ## Real-world example
 
@@ -189,6 +190,43 @@ const userController = wireUserController();
 ```
 
 Every step is type-checked. If `UserController` gets a new constructor parameter tomorrow, the compiler points to the exact line you need to update.
+
+## Async wires
+
+Some dependencies can only be built asynchronously: a database connection, a config fetched from a secret store. An async wire is a wire that returns a promise:
+
+```ts
+type AsyncWire<T> = () => Promise<T>;
+```
+
+`wireClassAsync` accepts any mix of sync and async wires and returns an async wire itself:
+
+```ts
+import { wireClassAsync, memoWire, type AsyncWire } from "@domain-first/wire";
+
+class UserService {
+    constructor(db: Database, logger: Logger) {}
+}
+
+// singleton: connects once, every caller gets the same promise
+const wireDb: AsyncWire<Database> = memoWire(() => Database.connect(url));
+
+const wireUserService = wireClassAsync(UserService, [
+    wireDb,     // async
+    wireLogger, // sync
+]);
+
+const userService = await wireUserService();
+```
+
+It follows the same rules as `wireClass`:
+
+- **Type-checked.** Every wire is checked against the matching constructor parameter. An `AsyncWire<Database>` fits a `Database` parameter, an `AsyncWire<Logger>` does not.
+- **Lazy.** Nothing is built until you call the wire, and every call builds a new instance.
+- **Concurrent.** Async dependencies are resolved in parallel.
+- **Errors propagate.** If a dependency rejects or the constructor throws, the returned promise rejects.
+
+`memoWire` works with async wires out of the box: it caches the promise, so concurrent calls share a single initialization. Note that a rejected promise is cached too.
 
 ## Give it a try
 

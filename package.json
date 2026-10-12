@@ -40,7 +40,7 @@
         "test:watch": "rstest --watch"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.4.15",
+        "@biomejs/biome": "2.4.2",
         "@rslib/core": "^0.23.2",
         "@rstest/adapter-rslib": "^0.10.6",
         "@rstest/core": "^0.10.6",
