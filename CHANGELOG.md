@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.2.1...v1.3.0) (2026-10-12)
+
+
+### Features
+
+* branched-wire-async ([182015e](https://github.com/alevnyacow/domain-first-wire/commit/182015ebe35d0d00b9d59f7f50e4830f2fd011cc))
+
 ## [1.2.1](https://github.com/alevnyacow/domain-first-wire/compare/v1.2.0...v1.2.1) (2026-10-12)
 
 
