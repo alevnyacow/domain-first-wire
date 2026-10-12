@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.3.1...v1.4.0) (2026-10-12)
+
+
+### Features
+
+* memoizing conditions, memo-wire-async ([8e21d90](https://github.com/alevnyacow/domain-first-wire/commit/8e21d903093e85a9a6a3e4b114c411213ca7212b))
+
 ## [1.3.1](https://github.com/alevnyacow/domain-first-wire/compare/v1.3.0...v1.3.1) (2026-10-12)
 
 
