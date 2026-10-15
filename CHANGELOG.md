@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/alevnyacow/domain-first-wire/compare/v1.4.0...v1.4.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* readme, api.md ([375f464](https://github.com/alevnyacow/domain-first-wire/commit/375f46483aee9d0a0a46538f7049d9cc7f0b4114))
+
 # [1.4.0](https://github.com/alevnyacow/domain-first-wire/compare/v1.3.1...v1.4.0) (2026-10-12)
 
 
